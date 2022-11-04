@@ -1,25 +1,86 @@
-const express = require('express')
+const express = require('express');
+const Joi = require('joi');
+const { listContacts, getContactById, removeContact, addContact, updateContact } = require('../../models/contacts');
 
 const router = express.Router()
 
 router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+  const contactsList = await listContacts();
+
+  return res.status(200).json(contactsList);
+});
 
 router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+  const { contactId } = req.params;
+  const contact = await getContactById(contactId);
+
+  if (!contact) {
+    return res.status(404).json({ message: 'Not found' });
+  }
+
+  return res.status(200).json(contact);
+});
 
 router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+  const schema = Joi.object({
+    name: Joi.string()
+      .alphanum()
+      .min(3)
+      .max(30)
+      .required(),
+    email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
+    phone: Joi.string()
+      .min(3)
+      .max(30)
+      .required()
+  });
+
+  const validateResult = schema.validate(req.body);
+  if (validateResult.error) {
+    return res.status(400).json({message: validateResult.error.details});
+  }
+
+  const { name, email, phone } = req.body;
+  const contactAdd = await addContact(name, email, phone);
+  return res.status(201).json(contactAdd);
+});
 
 router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
+  const { contactId } = req.params;
+  const deleteContact = await removeContact(contactId);
+
+  if (!deleteContact) {
+    return res.status(404).json({ "message": 'Not found' });
+  }
+
+  res.status(200).json({ "message": "contact deleted" });
 })
 
 router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
+  const schema = Joi.object({
+    name: Joi.string()
+      .alphanum()
+      .min(3)
+      .max(30)
+      .required(),
+    email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
+    phone: Joi.string()
+      .min(3)
+      .max(30)
+      .required()
+  });
+
+  const validateResult = schema.validate(req.body);
+  if (validateResult.error) {
+    return res.status(400).json({message: validateResult.error.details});
+  }
+
+  const { contactId } = req.params;
+  const contact = await updateContact(contactId, req.body);
+  
+  return res.status(200).json(contact);
 })
 
 module.exports = router
