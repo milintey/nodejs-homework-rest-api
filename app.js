@@ -19,11 +19,9 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  if (!err.status || !err.message) {
-    return res.status(500).json({ message: err.message });
-  }
+  const { status = 500, message = "Server internal error" } = err;
 
-  return res.status(500).json({ message: err.message });
+  return res.status(status).json({ message });
 });
 
 module.exports = app;
