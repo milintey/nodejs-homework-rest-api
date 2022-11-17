@@ -47,8 +47,6 @@ const updateContact = async (contactId, body) => {
 const updateStatusContact = async (contactId, favorite) => {
   const updateFavorite = await Contact.findByIdAndUpdate(contactId, favorite, { new: true });
 
-  console.log(updateFavorite);
-
   return updateFavorite;
 }
 

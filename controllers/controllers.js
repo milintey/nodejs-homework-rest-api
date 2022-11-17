@@ -1,5 +1,5 @@
 const { listContacts, getContactById, removeContact, addContact, updateContact, updateStatusContact } = require('../models/contacts');
-
+const { createNotFoundHttpError } = require('../helpers/index');
 
 const getContactsController = async (req, res, next) => {
     const contactsList = await listContacts();
@@ -7,12 +7,14 @@ const getContactsController = async (req, res, next) => {
     return res.status(200).json(contactsList);
 }
 
-const getContactIdController = async (req, res, next) => {
+const getContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
   const contact = await getContactById(contactId);
 
+  console.log(contact);
+
   if (!contact) {
-    return res.status(404).json({ message: 'Not found' });
+    return next(createNotFoundHttpError());
   }
 
   return res.status(200).json(contact);
@@ -30,7 +32,7 @@ const deleteContactByIdController = async (req, res, next) => {
   const deleteContact = await removeContact(contactId);
 
   if (!deleteContact) {
-    return res.status(404).json({ "message": 'Not found' });
+    return next(createNotFoundHttpError());
   }
 
   return res.status(200).json(deleteContact);
@@ -41,7 +43,7 @@ const putContactController = async (req, res, next) => {
   const contact = await updateContact(contactId, req.body);
 
   if (!contact) {
-    return res.status(404).json({ "message": 'Not found' });
+    return next(createNotFoundHttpError());
   }
   
   return res.status(200).json(contact);
@@ -49,19 +51,18 @@ const putContactController = async (req, res, next) => {
 
 const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
-
-  if (!req.body) {
-    return res.status(404).json({"message": "missing field favorite"});
-  }
-
   const updateStatus = await updateStatusContact(contactId, req.body);
+
+  if (!updateStatus) {
+    return next(createNotFoundHttpError());
+  }
 
   return res.status(200).json(updateStatus);
 }
 
 module.exports = {
     getContactsController,
-    getContactIdController,
+    getContactByIdController,
     postContactController,
     deleteContactByIdController,
     putContactController,
