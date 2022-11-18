@@ -1,22 +1,21 @@
 const express = require('express');
 const { schemaPutContact, schemaPostContact, schemaPatchContact } = require('../../schema/schems.js');
 const { validationBody } = require('../../middleware/validationBody');
-const { tryCatchWrapper } = require('../../helpers/index');
 const { getContactsController, getContactByIdController, postContactController, deleteContactByIdController, putContactController, patchContactController } = require('../../controllers/controllers');
 
 const router = express.Router()
 
-router.get('/', tryCatchWrapper(getContactsController));
+router.get('/', getContactsController);
 
-router.get('/:contactId', tryCatchWrapper(getContactByIdController));
+router.get('/:contactId', getContactByIdController);
 
-router.post('/', validationBody(schemaPostContact), tryCatchWrapper(postContactController));
+router.post('/', validationBody(schemaPostContact), postContactController);
 
-router.delete('/:contactId', tryCatchWrapper(deleteContactByIdController));
+router.delete('/:contactId', deleteContactByIdController);
 
-router.put('/:contactId', validationBody(schemaPutContact), tryCatchWrapper(putContactController));
+router.put('/:contactId', validationBody(schemaPutContact), putContactController);
 
-router.patch('/:contactId/favorite',validationBody(schemaPatchContact), tryCatchWrapper(patchContactController));
+router.patch('/:contactId/favorite',validationBody(schemaPatchContact), patchContactController);
 
 module.exports = router;
 
