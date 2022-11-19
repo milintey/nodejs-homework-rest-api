@@ -19,7 +19,6 @@ async function getContactById(contactId) {
 
 async function removeContact(contactId) {
   const deleteContact = await Contact.findById(contactId);
-  console.log(deleteContact);
 
   if (!deleteContact) {
     return null;
