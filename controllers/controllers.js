@@ -1,4 +1,5 @@
 const { listContacts, getContactById, removeContact, addContact, updateContact, updateStatusContact } = require('../models/contacts');
+const { createNotFoundHttpError } = require('../helpers/index');
 
 const getContactsController = async (req, res, next) => {
     const contactsList = await listContacts();
@@ -11,7 +12,7 @@ const getContactByIdController = async (req, res, next) => {
   const contact = await getContactById(contactId);
 
   if (!contact) {
-    return next(contact);
+    return next(createNotFoundHttpError());
   }
 
   return res.status(200).json(contact);
@@ -29,7 +30,7 @@ const deleteContactByIdController = async (req, res, next) => {
   const deleteContact = await removeContact(contactId);
 
   if (!deleteContact) {
-    return next(deleteContact);
+    return next(createNotFoundHttpError());
   }
 
   return res.status(200).json(deleteContact);
@@ -40,7 +41,7 @@ const putContactController = async (req, res, next) => {
   const contact = await updateContact(contactId, req.body);
 
   if (!contact) {
-    return next(contact);
+    return next(createNotFoundHttpError());
   }
   
   return res.status(200).json(contact);
@@ -51,7 +52,7 @@ const patchContactController = async (req, res, next) => {
   const updateStatus = await updateStatusContact(contactId, req.body);
 
   if (!updateStatus) {
-    return next(updateStatus);
+    return next(createNotFoundHttpError());
   }
 
   return res.status(200).json(updateStatus);
