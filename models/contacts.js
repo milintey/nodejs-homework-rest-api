@@ -9,29 +9,18 @@ async function listContacts() {
 
 async function getContactById(contactId) {
   const contacts = await Contact.findById(contactId);
-  
-  if (!contacts) {
-    return null;
-  }
 
   return contacts;
 }
 
 async function removeContact(contactId) {
-  const deleteContact = await Contact.findById(contactId);
-
-  if (!deleteContact) {
-    return null;
-  }
-
-  await Contact.findByIdAndDelete(contactId);
+  const deleteContact = await Contact.findByIdAndDelete(contactId);
 
   return deleteContact;
 }
 
 async function addContact(name, email, phone) {
   const contact = { name, email, phone };
-  
   const createContact = await Contact.create(contact);
 
   return createContact;
