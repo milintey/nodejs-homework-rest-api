@@ -26,8 +26,14 @@ const schemaPostContact = Joi.object({
       .max(30)
       .required()
 });
+
+const schemaPatchContact = Joi.object({
+    favorite: Joi.boolean()
+      .required()
+});
   
 module.exports = {
     schemaPostContact,
-    schemaPutContact
+    schemaPutContact,
+    schemaPatchContact
 }
