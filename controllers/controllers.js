@@ -52,7 +52,6 @@ const deleteContactByIdController = async (req, res, next) => {
 const putContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const { _id: userId } = req.user;
-
   const contact = await updateContact(contactId, req.body, userId);
 
   if (!contact) {
@@ -65,6 +64,7 @@ const putContactController = async (req, res, next) => {
 const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const { _id: userId } = req.user;
+
   const updateStatus = await updateStatusContact(contactId, req.body, userId);
 
   if (!updateStatus) {

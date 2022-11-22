@@ -1,23 +1,31 @@
 const { signUpUser, logInUser } = require('../models/authModels');
-const { createConflictError, createUnauthorizedError } = require('../helpers/index');
+const {
+  createConflictError,
+  createUnauthorizedError,
+  createSubscriptionError,
+} = require('../helpers/index');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../db/usersModel');
 
 const signUp = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-    const newUser = await signUpUser(email, password);
+    const { email, password, subscription } = req.body;
+    const newUser = await signUpUser(email, password, subscription);
+
+    console.log(newUser);
 
     return res.status(201).json({
-      data: {
-        user: {
-          email: newUser.email,
-          subscription: newUser.subscription,
-        },
+      user: {
+        email: newUser.email,
+        subscription: newUser.subscription,
       },
     });
   } catch (error) {
+    if (error._message === 'users validation failed') {
+      return next(createSubscriptionError());
+    }
+
     return next(createConflictError());
   }
 };

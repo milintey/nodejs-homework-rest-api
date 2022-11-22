@@ -18,16 +18,17 @@ const schemaPatchContact = Joi.object({
   favorite: Joi.boolean().required(),
 });
 
-const schemaUserSignUp = Joi.object({
+const schemaUserSignupAndLogin = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
     .required(),
   password: Joi.string().min(5).max(30).required(),
+  subscription: Joi.string().required(),
 });
 
 module.exports = {
   schemaPostContact,
   schemaPutContact,
   schemaPatchContact,
-  schemaUserSignUp,
+  schemaUserSignupAndLogin,
 };

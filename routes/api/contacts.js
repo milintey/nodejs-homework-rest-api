@@ -20,15 +20,10 @@ const router = express.Router();
 router.use(auth);
 
 router.get('/', getContactsController);
-
 router.get('/:contactId', getContactByIdController);
-
 router.post('/', validationBody(schemaPostContact), postContactController);
-
 router.delete('/:contactId', deleteContactByIdController);
-
 router.put('/:contactId', validationBody(schemaPutContact), putContactController);
-
 router.patch('/:contactId/favorite', validationBody(schemaPatchContact), patchContactController);
 
 module.exports = router;

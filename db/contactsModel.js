@@ -16,10 +16,6 @@ const contactSchema = new Schema({
     default: false,
   },
   userId: {
-    type: String,
-    required: true,
-  },
-  owner: {
     type: Schema.Types.ObjectId,
     ref: 'user',
   },
