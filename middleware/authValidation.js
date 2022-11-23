@@ -3,14 +3,12 @@ const jwt = require('jsonwebtoken');
 const User = require('../db/usersModel');
 
 async function auth(req, res, next) {
-  console.log('auth middleware', req.headers.authorization);
   const authHeader = req.headers.authorization || '';
 
   const [tokenType, token] = authHeader.split(' ');
   if (tokenType === 'Bearer' && token) {
     try {
       const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('token is valid', verifiedToken);
 
       const user = await User.findById(verifiedToken._id);
       if (!user) {
@@ -21,7 +19,6 @@ async function auth(req, res, next) {
         return next(createUnauthorizedTokenError('token is invalid'));
       }
 
-      console.log('user:', user);
       req.user = user;
 
       return next();

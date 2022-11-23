@@ -18,17 +18,25 @@ const schemaPatchContact = Joi.object({
   favorite: Joi.boolean().required(),
 });
 
-const schemaUserSignupAndLogin = Joi.object({
+const schemaUserLogin = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
     .required(),
   password: Joi.string().min(5).max(30).required(),
-  subscription: Joi.string().required(),
+});
+
+const schemaUserSignup = Joi.object({
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+    .required(),
+  password: Joi.string().min(5).max(30).required(),
+  subscription: Joi.string().valid('starter', 'pro', 'business').default('starter'),
 });
 
 module.exports = {
   schemaPostContact,
   schemaPutContact,
   schemaPatchContact,
-  schemaUserSignupAndLogin,
+  schemaUserLogin,
+  schemaUserSignup,
 };

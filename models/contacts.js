@@ -1,41 +1,50 @@
 const { Contact } = require('../db/contactsModel');
 
-async function listContacts(userId) {
-  const contactsList = await Contact.find({ userId });
+async function listContacts(owner) {
+  const contactsList = await Contact.find({ owner }).populate('owner', '_id email subscription');
 
   return contactsList;
 }
 
-async function getContactById(contactId, userId) {
-  const contacts = await Contact.findOne({ _id: contactId, userId });
+async function getContactById(contactId, owner) {
+  const contacts = await Contact.findOne({ _id: contactId, owner }).populate(
+    'owner',
+    '_id email subscription'
+  );
 
   return contacts;
 }
 
-async function removeContact(contactId, userId) {
-  const deleteContact = await Contact.findOneAndDelete({
-    _id: contactId,
-    userId,
-  });
-
-  return deleteContact;
-}
-
-async function addContact(name, email, phone, userId) {
-  const contact = { name, email, phone, userId };
+async function addContact(name, email, phone, owner) {
+  const contact = { name, email, phone, owner };
   const createContact = await Contact.create(contact);
 
   return createContact;
 }
 
-const updateContact = async (contactId, body, userId) => {
-  const updatedContact = await Contact.findOneAndUpdate({ id: contactId, userId }, body);
+async function removeContact(contactId, owner) {
+  const deleteContact = await Contact.findOneAndDelete({
+    _id: contactId,
+    owner,
+  }).populate('owner', '_id email subscription');
+
+  return deleteContact;
+}
+
+const updateContact = async (contactId, body, owner) => {
+  const updatedContact = await Contact.findOneAndUpdate({ id: contactId, owner }, body).populate(
+    'owner',
+    '_id email subscription'
+  );
 
   return updatedContact;
 };
 
-const updateStatusContact = async (contactId, favorite, userId) => {
-  const updateFavorite = await Contact.findOneAndUpdate({ id: contactId, userId }, favorite);
+const updateStatusContact = async (contactId, favorite, owner) => {
+  const updateFavorite = await Contact.findOneAndUpdate(
+    { id: contactId, owner },
+    favorite
+  ).populate('owner', '_id email subscription');
 
   return updateFavorite;
 };

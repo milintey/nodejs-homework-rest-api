@@ -1,9 +1,5 @@
 const { signUpUser, logInUser } = require('../models/authModels');
-const {
-  createConflictError,
-  createUnauthorizedError,
-  createSubscriptionError,
-} = require('../helpers/index');
+const { createConflictError, createUnauthorizedError } = require('../helpers/index');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../db/usersModel');
@@ -13,8 +9,6 @@ const signUp = async (req, res, next) => {
     const { email, password, subscription } = req.body;
     const newUser = await signUpUser(email, password, subscription);
 
-    console.log(newUser);
-
     return res.status(201).json({
       user: {
         email: newUser.email,
@@ -22,43 +16,39 @@ const signUp = async (req, res, next) => {
       },
     });
   } catch (error) {
-    if (error._message === 'users validation failed') {
-      return next(createSubscriptionError());
-    }
-
     return next(createConflictError());
   }
 };
 
 const logIn = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await logInUser(email);
+  const { email, password } = req.body;
+  const user = await logInUser(email);
 
-    const passwordTheSame = await bcrypt.compare(password, user.password);
-
-    if (!passwordTheSame) {
-      return next(createUnauthorizedError());
-    }
-
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '15m',
-    });
-    user.token = token;
-    await User.findByIdAndUpdate(user._id, user);
-
-    return res.status(200).json({
-      data: {
-        token,
-        user: {
-          email: user.email,
-          subscription: user.subscription,
-        },
-      },
-    });
-  } catch (error) {
+  if (!user) {
     return next(createUnauthorizedError());
   }
+
+  const passwordTheSame = await bcrypt.compare(password, user.password);
+
+  if (!passwordTheSame) {
+    return next(createUnauthorizedError());
+  }
+
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: '15m',
+  });
+  user.token = token;
+  await User.findByIdAndUpdate(user._id, user);
+
+  return res.status(200).json({
+    data: {
+      token,
+      user: {
+        email: user.email,
+        subscription: user.subscription,
+      },
+    },
+  });
 };
 
 const logOut = async (req, res, next) => {
@@ -67,7 +57,7 @@ const logOut = async (req, res, next) => {
   user.token = null;
   await User.findByIdAndUpdate(user._id, user);
 
-  return res.status(204).json({ message: 'LOG OUT' });
+  return res.status(204).json({});
 };
 
 const current = async (req, res, next) => {

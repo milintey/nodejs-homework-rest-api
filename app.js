@@ -23,6 +23,8 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   const { status = 500, message = 'Server internal error' } = err;
 
+  // console.log(err);
+
   return res.status(status).json({ message });
 });
 

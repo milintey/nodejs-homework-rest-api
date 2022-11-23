@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const signUpUser = async (email, password, subscription) => {
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
-  console.log(hashedPassword);
+
   const user = new User({ email, password: hashedPassword, subscription });
   await user.save();
 

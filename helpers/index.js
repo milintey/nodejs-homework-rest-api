@@ -4,12 +4,6 @@ function createNotFoundHttpError() {
   return err;
 }
 
-function createSubscriptionError() {
-  const err = new Error('The subscribe field should be: starter, pro or business');
-  err.status = 404;
-  return err;
-}
-
 function createConflictError() {
   const err = new Error('Email in use');
   err.status = 409;
@@ -33,5 +27,4 @@ module.exports = {
   createUnauthorizedError,
   createUnauthorizedTokenError,
   createNotFoundHttpError,
-  createSubscriptionError,
 };
