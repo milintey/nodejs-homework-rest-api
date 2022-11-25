@@ -13,6 +13,7 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
+app.use('/public', express.static('public'));
 app.use('/api/users', authRouter);
 app.use('/api/contacts', contactsRouter);
 
@@ -22,8 +23,6 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   const { status = 500, message = 'Server internal error' } = err;
-
-  // console.log(err);
 
   return res.status(status).json({ message });
 });

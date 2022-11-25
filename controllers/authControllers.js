@@ -2,6 +2,8 @@ const { signUpUser, logInUser } = require('../models/authModels');
 const { createConflictError, createUnauthorizedError } = require('../helpers/index');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const jimp = require('jimp');
+const path = require('path');
 const User = require('../db/usersModel');
 
 const signUp = async (req, res, next) => {
@@ -73,9 +75,25 @@ const current = async (req, res, next) => {
   });
 };
 
+const updateAvatar = async (req, res, next) => {
+  const pathFile = path.join(__dirname, '../tmp', req.file.filename);
+  const newFileName = req.user.email + req.file.filename;
+  const newPathFile = path.join(__dirname, '../public/avatars', newFileName);
+  const newUserPathAvatar = '/public/avatars/' + newFileName;
+
+  const image = await jimp.read(pathFile);
+  await image.resize(250, 250);
+  await image.writeAsync(newPathFile);
+
+  const user = await User.findByIdAndUpdate(req.user._id, { avatarURL: newUserPathAvatar });
+
+  return res.status(200).json({ avatarURL: user.avatarURL });
+};
+
 module.exports = {
   signUp,
   logIn,
   logOut,
   current,
+  updateAvatar,
 };
