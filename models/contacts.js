@@ -1,42 +1,53 @@
 const { Contact } = require('../db/contactsModel');
 
+async function listContacts(owner) {
+  const contactsList = await Contact.find({ owner }).populate('owner', '_id email subscription');
 
-async function listContacts() {
-  const contactsList = await Contact.find();
-  
   return contactsList;
 }
 
-async function getContactById(contactId) {
-  const contacts = await Contact.findById(contactId);
+async function getContactById(contactId, owner) {
+  const contacts = await Contact.findOne({ _id: contactId, owner }).populate(
+    'owner',
+    '_id email subscription'
+  );
 
   return contacts;
 }
 
-async function removeContact(contactId) {
-  const deleteContact = await Contact.findByIdAndDelete(contactId);
-
-  return deleteContact;
-}
-
-async function addContact(name, email, phone) {
-  const contact = { name, email, phone };
+async function addContact(name, email, phone, owner) {
+  const contact = { name, email, phone, owner };
   const createContact = await Contact.create(contact);
 
   return createContact;
 }
 
-const updateContact = async (contactId, body) => {
-  const updatedContact = await Contact.findByIdAndUpdate(contactId, body, { new: true });
+async function removeContact(contactId, owner) {
+  const deleteContact = await Contact.findOneAndDelete({
+    _id: contactId,
+    owner,
+  }).populate('owner', '_id email subscription');
+
+  return deleteContact;
+}
+
+const updateContact = async (contactId, body, owner) => {
+  const updatedContact = await Contact.findOneAndUpdate({ id: contactId, owner }, body).populate(
+    'owner',
+    '_id email subscription'
+  );
 
   return updatedContact;
-}
+};
 
-const updateStatusContact = async (contactId, favorite) => {
-  const updateFavorite = await Contact.findByIdAndUpdate(contactId, favorite, { new: true });
+const updateStatusContact = async (contactId, favorite, owner) => {
+  const updateFavorite = await Contact.findOneAndUpdate(
+    { id: contactId, owner },
+    favorite
+  ).populate('owner', '_id email subscription');
 
   return updateFavorite;
-}
+};
 
 module.exports = {
   listContacts,
@@ -45,4 +56,4 @@ module.exports = {
   addContact,
   updateContact,
   updateStatusContact,
-}
+};
