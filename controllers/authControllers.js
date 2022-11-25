@@ -79,13 +79,17 @@ const updateAvatar = async (req, res, next) => {
   const pathFile = path.join(__dirname, '../tmp', req.file.filename);
   const newFileName = req.user.email + req.file.filename;
   const newPathFile = path.join(__dirname, '../public/avatars', newFileName);
-  const newUserPathAvatar = '/public/avatars/' + newFileName;
+  const newUserPathAvatar = '/avatars/' + newFileName;
 
   const image = await jimp.read(pathFile);
   await image.resize(250, 250);
   await image.writeAsync(newPathFile);
 
-  const user = await User.findByIdAndUpdate(req.user._id, { avatarURL: newUserPathAvatar });
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { avatarURL: newUserPathAvatar },
+    { new: true }
+  );
 
   return res.status(200).json({ avatarURL: user.avatarURL });
 };
