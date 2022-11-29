@@ -2,12 +2,18 @@ const User = require('../db/usersModel');
 const bcrypt = require('bcrypt');
 const gravatar = require('gravatar');
 
-const signUpUser = async (email, password, subscription) => {
+const signUpUser = async (email, password, subscription, verificationToken) => {
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
   const avatarURL = gravatar.url(email, { s: '200', r: 'pg', d: '404' });
 
-  const user = new User({ email, password: hashedPassword, subscription, avatarURL });
+  const user = new User({
+    email,
+    password: hashedPassword,
+    subscription,
+    avatarURL,
+    verificationToken,
+  });
   await user.save();
 
   return user;
