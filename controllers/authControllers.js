@@ -24,7 +24,8 @@ const signUp = async (req, res, next) => {
       text: `Please, http://localhost:3000/api/users/verify/${verificationToken} your email address`,
       html: `Please, <a href="http://localhost:3000/api/users/verify/${verificationToken}">confirm</a> your email address`,
     };
-    sgMail
+
+    await sgMail
       .send(msg)
       .then(() => {
         console.log('Email sent');
@@ -149,7 +150,8 @@ const resendingEmail = async (req, res, next) => {
     text: `Please, http://localhost:3000/api/users/verify/${user.verificationToken} your email address`,
     html: `Please, <a href="http://localhost:3000/api/users/verify/${user.verificationToken}">confirm</a> your email address`,
   };
-  sgMail
+
+  await sgMail
     .send(msg)
     .then(() => {
       console.log('Email sent');
