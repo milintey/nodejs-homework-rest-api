@@ -33,10 +33,17 @@ const schemaUserSignup = Joi.object({
   subscription: Joi.string().valid('starter', 'pro', 'business').default('starter'),
 });
 
+const schemaVerifyUser = Joi.object({
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+    .required(),
+});
+
 module.exports = {
   schemaPostContact,
   schemaPutContact,
   schemaPatchContact,
   schemaUserLogin,
   schemaUserSignup,
+  schemaVerifyUser,
 };

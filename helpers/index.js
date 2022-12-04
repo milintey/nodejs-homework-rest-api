@@ -22,9 +22,16 @@ function createUnauthorizedTokenError(text) {
   return err;
 }
 
+function customError(errorStatus, errorText) {
+  const err = new Error(errorText);
+  err.status = errorStatus;
+  return err;
+}
+
 module.exports = {
   createConflictError,
   createUnauthorizedError,
   createUnauthorizedTokenError,
   createNotFoundHttpError,
+  customError,
 };
